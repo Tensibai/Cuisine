@@ -21,13 +21,27 @@
               %span{:class => "notice label"} No resources updated
             - else
             %ul
+              %li
+                %ul
+                  %li Total resources: #{@infos[0][:resources_total]}
+                  %li Updated resources global: #{@infos[0][:updated_resources_total]}
+                  %li Shown updated resources: #{@infos[0][:updated_resources_count]}
               - @infos[:updated_resources].each do |resource, type|
                 %li
                   #{resource} (#{type})
                   - unless @infos[:diffs][resource].nil?
-                    %pre                           |
-                      #{@infos[:diffs][resource]}  |
-
+                    %pre #{@infos[:diffs][resource]}
+        %li
+          %strong
+            Cookbooks used:
+          - if @infos[0][:cookbooks].empty? then
+            %span{:class => "notice label"} No cookbooks in this run.
+          - else
+            %span
+            %ul
+              - @infos[0][:cookbooks].each do |name, version|
+                %li
+                  #{name} => #{version}
         %li
           %strong
             Date :

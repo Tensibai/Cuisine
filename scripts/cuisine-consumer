@@ -15,7 +15,7 @@ options.debug = false
 options.configfile = "./cuisine.yml"
 options.es = true
 options.pg = true
-options.acknownledge = true
+options.acknowledge = true
 options.foreground = false
 options.pidfile = "/var/run/cuisine_consumer.pid"
 
@@ -38,7 +38,7 @@ opts = OptionParser.new do |opts|
   end
 
   opts.on("-a", "--[no-]acknowledge", "Acknowledge data as it comes, removing it from message queue [default : true]") do |a|
-    options.debug = a
+    options.acknowledge = a
   end
 
   opts.on("-f", "--[no-]foreground", "Runs foreground (or goes background) [default : false]") do |f|
@@ -95,14 +95,19 @@ cnx.subscribe(config["stomp_queue"], { :ack => :client }) do |data|
 
   # ES ?
   if options.es == true then
-    Tire.index config["es_index"] do
+    Tire.index "#{config["es_index"]}-#{Time.now.strftime("%Y%m%d")}" do
       store :nodename => infos[:nodename],
             :elapsed_time => infos[:elapsed_time],
             :start_time => infos[:start_time].strftime("%Y/%m/%d %H:%M:%S"),
             :end_time => infos[:end_time].strftime("%Y/%m/%d %H:%M:%S"),
+            :resources_total => infos[:resources_total],
+            :updated_resources_total => infos[:updated_resources_total],
+            :updated_resources_count => infos[:updated_resources_count],
             :updated_resources => infos[:updated_resources].to_a,
             :environment => infos[:environment],
-            :diffs => infos[:diffs]
+            :diffs => infos[:diffs].to_a,
+            :cookbook_count => infos[:cookbook_count],
+            :cookbooks => infos[:cookbooks].to_a
 
       refresh
     end
