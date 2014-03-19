@@ -5,8 +5,8 @@ require "sinatra"
 require "haml"
 
 require "tire"
-require "cuisine/elasticsearch"
-require "cuisine/config"
+require "./cuisine/elasticsearch"
+require "./cuisine/config"
 
 __DIR__ = File.expand_path(File.dirname(__FILE__))
 
@@ -90,7 +90,7 @@ get "/host/:hostname" do
 end
 
 get "/run/:id" do
-  @infos = es_get_run(params[:id])[0]
+  @rinfos = es_get_run(params[:id])[0]
   haml :run
 end
 

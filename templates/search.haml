@@ -1,74 +1,82 @@
-%h3
-  Search into indexed data
+%div{:class => 'col-md-8 col-md-offset-2'}
+  %h3
+    Search into indexed data
 
-- if @search_params then
-  - nodename_v = @search_params[:string][:nodename]
-  - updated_resources_v = @search_params[:string][:updated_resources]
-  - diffs_v = @search_params[:string][:diffs]
+  - if @search_params then
+    - nodename_v = @search_params[:string][:nodename]
+    - updated_resources_v = @search_params[:string][:updated_resources]
+    - diffs_v = @search_params[:string][:diffs]
 
-%form{:method => "post"}
-  %div{:class => "clearfix"}
-    %label{:for => "nodename"}
-      Node name
-    %div{:class => "input"}
-      %div{:class => "inline-inputs"}
-        %input{:class => "large", :id => "nodename", :name => "nodename", :value => nodename_v, :size => "40", :type => "text"}
-        %input{:type=>"checkbox", :name => "chk_nodename", :id => "", :value => "true"}
+  %form{:method => "post"}
+    %div{:class => "clearfix"}
+      %label{:for => "nodename"}
+        Node name
+      %div{:class => "input"}
+        %div{:class => "inline-inputs"}
+          %input{:class => "large", :id => "nodename", :name => "nodename", :value => nodename_v, :size => "40", :type => "text"}
+          %input{:type=>"checkbox", :name => "chk_nodename", :id => "", :value => "true"}
 
-  %div{:class => "clearfix"}
-    %label{:for => "updated_resources"}
-      Resource
-    %div{:class => "input" }
-      %div{:class => "inline-inputs"}
-        %input{:class => "large", :id => "updated_resources", :name => "updated_resources", :value => updated_resources_v, :size => "40", :type => "text"}
-        %input{:type=>"checkbox", :name => "chk_updated_resources", :id => "", :value => "true", :checked => "checked" }
+    %div{:class => "clearfix"}
+      %label{:for => "updated_resources"}
+        Resource
+      %div{:class => "input" }
+        %div{:class => "inline-inputs"}
+          %input{:class => "large", :id => "updated_resources", :name => "updated_resources", :value => updated_resources_v, :size => "40", :type => "text"}
+          %input{:type=>"checkbox", :name => "chk_updated_resources", :id => "", :value => "true", :checked => "checked" }
 
-  %div{:class => "clearfix"}
-    %label{:for => "diffs"}
-      Diffs
-    %div{:class => "input" }
-      %div{:class => "inline-inputs"}
-        %input{:class => "large", :id => "diffs", :name => "diffs", :value => diffs_v, :size => "40", :type => "text"}
-        %input{:type=>"checkbox", :name => "chk_diffs", :id => "", :value => "true" }
+    %div{:class => "clearfix"}
+      %label{:for => "diffs"}
+        Diffs
+      %div{:class => "input" }
+        %div{:class => "inline-inputs"}
+          %input{:class => "large", :id => "diffs", :name => "diffs", :value => diffs_v, :size => "40", :type => "text"}
+          %input{:type=>"checkbox", :name => "chk_diffs", :id => "", :value => "true" }
 
-  %div{:class => "clearfix"}
-    %label{:for => "environment"}
-      Environment
-    %div{:class => "input"}
-      %div{:class => "inline-inputs"}
-        %select{:name => "environment", :value => "true"} |
-          %option{:value => "*" } All
-          - @environments.each do |environment, count|
-            %option{:value => "#{environment}" }
-              #{environment}
+    %div{:class => "clearfix"}
+      %label{:for => "environment"}
+        Environment
+      %div{:class => "input"}
+        %div{:class => "inline-inputs"}
+          %select{:name => "environment", :value => "true"} |
+            %option{:value => "*" } All
+            - @environments.each do |environment, count|
+              %option{:value => "#{environment}" }
+                #{environment}
 
-  %div{:class => "clearfix"}
-    %input{:type=>"checkbox", :name => "chk_updatedonly", :id => "", :value => "true"} |
-    Don't show runs with no resources updated
+    %div{:class => "clearfix"}
+      %input{:type=>"checkbox", :name => "chk_updatedonly", :id => "", :value => "true"} |
+      Don't show runs with no resources updated
 
-  %div{:class => "clearfix"}
-    %div{:class => "input"}
-      %input{:type => "submit", :class =>"primary", :value => "search !"}
+    %div{:class => "clearfix"}
+      %div{:class => "input"}
+        %input{:type => "submit", :class =>"primary", :value => "search !"}
 
-  %span{:class => "help-inline"}
-    Tick the checkbox for each criteria you want to include
+    %span{:class => "help-inline"}
+      Tick the checkbox for each criteria you want to include
 
-- if @results then
-  - if @results.empty? then
-    %div{:class => "alert-message block-message warning"}
-      ho noes ! no results
-  - else
-    %h4
-      Your search returned #{@results.count} result(s)
-    %div{:class => "content"}
-      - @results.each do |run|
-        %li
-          at |
-          %strong
-            #{run[:start_time]}
-          on |
-          %strong 
-            #{run[:nodename]} |
-          -                   | 
-          %a{:href => "/run/#{run[:id]}"}
-            details
+  - if @results then
+    - if @results.empty? then
+      %div{:class => "alert-message block-message warning"}
+        ho noes ! no results
+    - else
+      %h4
+        Your search returned #{@results.count} result(s)
+      %div{:class => "content"}
+        - @results.each do |run|
+          %li
+            at |
+            %strong
+              #{run[:start_time]}
+            on |
+            %strong
+              #{run[:nodename]} |
+            -                   |
+            %a{:href => "/run/#{run[:id]}"}
+              details
+            (Updated
+            %strong
+              #{run[:updated_resources_count]}
+            on
+            %strong
+              #{run[:resources_total]}
+            Total)

@@ -7,75 +7,36 @@
 - if @infos.count < nb_runs
   - nb_runs = @infos.count-1
 %div{:class => "row" }
-  %div{:class => "span10" }
-    %h2
-      #{@infos[0][:nodename]}
+  %div{:class => "col-md-10" }
+    - @rinfos = @infos[0]
+    = haml :run
 
-    %p
-      %strong
-        Latest run :
-      #{@infos[0][:start_time]}
-
-    %div{:class => "container" }
-      - if @infos[0][:updated_resources].empty? then
-        %span{:class => "notice label"} No resources updated on last run
-      - else
-        %div{:class => "span6" }
-          %strong Metrics: 
-          %ul
-            %li Total resources: #{@infos[0][:resources_total]}
-            %li Updated resources global: #{@infos[0][:updated_resources_total]}
-            %li Shown updated resources: #{@infos[0][:updated_resources_count]}
-        %div{:class => "span6" }  
-          %strong Updated resources:
-          %ul
-            - @infos[0][:updated_resources].each do |resource, resource_type|
-              %li
-                #{resource} (#{resource_type})
-    %div{:class => "container" }
-      %div{:class => "span6" }
-        %strong  Cookbooks used:
-        - if @infos[0][:cookbooks].empty? then
-          %span{:class => "notice label"} No cookbooks in this run.
-        - else
-          %table
-            %tr
-              %thead
-                %th Name
-                %th Version
-              %tbody
-                - @infos[0][:cookbooks].each do |name, version|
-                  %tr
-                    %td #{name}
-                    %td #{version}
-
-      %div{:class => "span6" }
+    %div{:class => "col-md-10 col-md-offset-1" }
+      %div{:class => "col-md-4" }
         %strong
           Short history (#{@infos.count} latest runs) :
         %ul
-        - for i in 0..nb_runs do
+        - (0..nb_runs).each do |i|
           - if @infos[i][:start_time] then
             %li
               #{@infos[i][:start_time]} |
               - |
               %a{:href => "/run/#{@infos[i][:id]}"}
-              summary
-    %p
-    %div
-      %strong
-        Last runs duration, in seconds :
-      %p
-      %div{:id => "placeholder", :style=>"width:600px;height:300px;"}
+                summary
+      %div{:class => "col-md-8" }
+        %strong
+          Last runs duration, in seconds :
+        %div{:id => "placeholder", :style=>"width:600px;height:300px;"}
 
-      - graph_coords=[]
-      - times=[]
-      - run_ids=""
-      - for i in 0..nb_runs do
-        - if @infos[i][:elapsed_time] then
-          - graph_coords.push "[#{(nb_runs+1)-i}, #{sprintf("%.1f",@infos[i][:elapsed_time].to_f)}]"
-          - times.push sprintf("%.1f", @infos[i][:elapsed_time]).to_f
-          - run_ids+="'#{(nb_runs+1)-i}': '#{@infos[i][:id]}', "
-      - graph_points="[#{graph_coords.join(', ')}]"
+        - graph_coords=[]
+        - times=[]
+        - run_ids=""
+        - (0..nb_runs).each do |i|
+          - if @infos[i][:elapsed_time] then
+            - graph_coords.push "[#{(nb_runs+1)-i}, #{sprintf("%.1f",@infos[i][:elapsed_time].to_f)}]"
+            - times.push sprintf("%.1f", @infos[i][:elapsed_time]).to_f
+            - run_ids+="'#{(nb_runs+1)-i}': '#{@infos[i][:id]}', "
+        - graph_points="[#{graph_coords.join(', ')}]"
   :javascript
     $(function () {
       var graphdata = #{graph_points};

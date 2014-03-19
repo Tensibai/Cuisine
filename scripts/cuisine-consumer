@@ -107,7 +107,7 @@ cnx.subscribe(config["stomp_queue"], { :ack => :client }) do |data|
             :environment => infos[:environment],
             :diffs => infos[:diffs].to_a,
             :cookbook_count => infos[:cookbook_count],
-            :cookbooks => infos[:cookbooks].to_a
+            :cookbooks => infos[:cookbooks]
 
       refresh
     end

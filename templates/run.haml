@@ -1,54 +1,73 @@
-%div{:class => "row" }
-  %div{:class => "span10" }
-  - if @infos then
-    %h2
-      Run 
-      #{@infos[:id]}
+- if @rinfos then
+  %div{:class => "row" }
+    %div{:class => "col-md-10 col-xs-offset-1"}
+      %h2
+        Run id
+        #{@rinfos[:id]}
 
-    %h3
-      Details
-
-    %div
+      %h3
+        Details
+  %div.row
+    %div{:class => "col-md-4 col-md-offset-1" }
+      %strong
+        Host :
       %ul
         %li
-          %strong
-            Host :
-          #{@infos[:nodename]}
+          %em
+            Name:
+          #{@rinfos[:nodename]}
         %li
-          %strong
-            Changes :
-            - if @infos[:updated_resources].empty? then
-              %span{:class => "notice label"} No resources updated
-            - else
-            %ul
-              %li
-                %ul
-                  %li Total resources: #{@infos[:resources_total]}
-                  %li Updated resources global: #{@infos[:updated_resources_total]}
-                  %li Shown updated resources: #{@infos[:updated_resources_count]}
-              - @infos[:updated_resources].each do |resource, type|
-                %li
-                  #{resource} (#{type})
-                  - unless @infos[:diffs][resource].nil?
-                    %pre #{@infos[:diffs][resource]}
-        %li
-          %strong
-            Cookbooks used:
-          - if @infos[:cookbooks].empty? then
-            %span{:class => "notice label"} No cookbooks in this run.
-          - else
-            %span
-            %ul
-              - @infos[:cookbooks].each do |name, version|
-                %li
-                  #{name} => #{version}
-        %li
-          %strong
+          %em
             Date :
-          #{@infos[:start_time]}
+          #{@rinfos[:start_time]}
         %li
-          %strong
+          %em
             Duration :
-          #{sprintf("%.2f", @infos[:elapsed_time])}s
-  - else
+          #{sprintf("%.2f", @rinfos[:elapsed_time])}s
+    %div{:class => "col-md-6" }
+      %strong Metrics:
+      %ul
+        %li Total resources: #{@rinfos[:resources_total]}
+        %li Updated resources global: #{@rinfos[:updated_resources_total]}
+        %li Shown updated resources: #{@rinfos[:updated_resources_count]}
+  -# @rinfos[:cookbooks].push(Array.new) if (@rinfos[:cookbooks].length % 2)
+  - unless @rinfos[:cookbooks].nil?
+    %div{:class => "row" }
+      %div.col-md-10.col-xs-offset-1
+        %strong  Cookbooks used:
+        - if @rinfos[:cookbooks].empty? then
+          %span{:class => "notice label"} No cookbooks in this run.
+        - else
+          %table.table.table-striped.table-condensed
+            %thead
+              %tr
+                - (1..4).each do |n|
+                  %th Name
+                  %th Version
+            %tbody
+              - @rinfos[:cookbooks].each_slice(4) do |entries|
+                %tr
+                  - entries.each do |name, version|
+                    %td #{name}
+                    %td #{version}
+
+
+  %div{:class => "row" }
+    %div.col-md-10.col-xs-offset-1
+      - if @rinfos[:updated_resources].empty? then
+        %span{:class => "notice label"} No resources updated on last run
+      - else
+
+        %div
+          %strong Updated resources:
+          %ul
+            - @rinfos[:updated_resources].each do |resource, resource_type|
+              %li
+                #{resource} (#{resource_type})
+                - unless @rinfos[:diffs][resource].nil?
+                  %pre
+                    #{@rinfos[:diffs][resource]}
+
+- else
+  %div.col-md-1
     %h3 No such document in ElasticSearch !!

@@ -1,26 +1,31 @@
 - @latest.each do |run|
 - run_id = run[:id]
-  %div{:id => run_id, :class => "modal hide fade"}
-    %div{:class => "modal-header"}
-      %h3 Details for #{run[:nodename]}
-    %div{:class => "modal-body"}
-      %h4 
-        Modified resources :
-        - if run[:updated_resources].empty? then
-          %span{:class => "notice label"} No resources updated
-        - else
-        %p
-        - run[:updated_resources].each do |resource, resource_type|
-          %li
-            #{resource} (#{resource_type})
-      %h4
-        Run duration : #{sprintf("%.2f", run[:elapsed_time])}s
-    %div{:class => "modal-footer"}
-      %a{:href => "#", :class => "btn alert close"} OK
+  %div{:id => run_id, :class => "modal fade" }
+    -if
+    %div{:class => "modal-dialog alert alert-info" }
+      %div{:class => "modal-header"}
+        %button{:class => "close", "data-dismiss" => "modal", "aria-hidden" => "true", "aria-hidden" => "true" }
+          &times;
+        %h3 Details for #{run[:nodename]}
+      %div{:class => "modal-body"}
+        %h4
+          Modified resources :
+          - if run[:updated_resources].empty? then
+            %span{:class => "notice label"} No resources updated
+          - else
+            %ul
+            - run[:updated_resources].each do |resource, resource_type|
+              %li
+                #{resource} (#{resource_type})
+        %h4
+          Run duration : #{sprintf("%.2f", run[:elapsed_time])}s
+      %div{:class => "modal-footer"}
+        %button{:class => "btn btn primary close"}
+          OK
 
 
 %div{:class => "row"}
-  %div{:class => "span10"}
+  %div{:class => "col-md-8 col-md-offset-2"}
     %h2
       The #{@latest.count} latest runs
     - @latest.each do |run|
@@ -30,7 +35,7 @@
       %li
         %a{:href => "/host/#{nodename}" }
           #{nodename}
-        (#{ago} minutes ago) - |
+        (#{ago} minutes ago) -
         %a{:"data-controls-modal" => run_id, :"data-backdrop" => "true", :"data-keyboard" => "true", :class => "danger", :href => "#"}
           quick view
         \-
@@ -39,7 +44,8 @@
 
 %p
   %div{:class => "row"}
-    %form{:method => "get"}
-      %input{:type => "checkbox", :name=> "updatedonly", :value => "true", :checked => @updatedonly } |
-      Filter out runs with no resources updated                                                       |
-      %input{:type => "submit", :value => "Go", :class => "btn primary small", :action => "submit"}
+    %div{:class => "col-md-8 col-md-offset-3"}
+      %form{:method => "get"}
+        %input{:type => "checkbox", :name=> "updatedonly", :value => "true", :checked => @updatedonly } |
+        Filter out runs with no resources updated                                                       |
+        %input{:type => "submit", :value => "Go", :class => "btn primary small", :action => "submit"}
