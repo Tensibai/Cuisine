@@ -1,7 +1,6 @@
 - @latest.each do |run|
 - run_id = run[:id]
   %div{:id => run_id, :class => "modal fade" }
-    -if
     %div{:class => "modal-dialog alert alert-info" }
       %div{:class => "modal-header"}
         %button{:class => "close", "data-dismiss" => "modal", "aria-hidden" => "true", "aria-hidden" => "true" }
@@ -20,12 +19,12 @@
         %h4
           Run duration : #{sprintf("%.2f", run[:elapsed_time])}s
       %div{:class => "modal-footer"}
-        %button{:class => "btn btn primary close"}
+        %button{:class => "btn btn-primary close", "data-dismiss"=>"modal" }
           OK
 
 
 %div{:class => "row"}
-  %div{:class => "col-md-8 col-md-offset-2"}
+  %div{:class => "col-md-10 col-md-offset-2"}
     %h2
       The #{@latest.count} latest runs
     - @latest.each do |run|
@@ -36,16 +35,15 @@
         %a{:href => "/host/#{nodename}" }
           #{nodename}
         (#{ago} minutes ago) -
-        %a{:"data-controls-modal" => run_id, :"data-backdrop" => "true", :"data-keyboard" => "true", :class => "danger", :href => "#"}
+        %a{"data-target"=>"##{run_id}", "data-toggle"=>"modal", "data-backdrop" => "true", "data-keyboard" => "true", :href=>"#" }
           quick view
         \-
         %a{:href => "/run/#{run_id}" }
           detailed view
 
-%p
-  %div{:class => "row"}
-    %div{:class => "col-md-8 col-md-offset-3"}
-      %form{:method => "get"}
-        %input{:type => "checkbox", :name=> "updatedonly", :value => "true", :checked => @updatedonly } |
-        Filter out runs with no resources updated                                                       |
-        %input{:type => "submit", :value => "Go", :class => "btn primary small", :action => "submit"}
+%div{:class => "row"}
+  %div{:class => "col-md-10 col-md-offset-3"}
+    %form{:method => "get"}
+      %input{:type => "checkbox", :name=> "updatedonly", :value => "true", :checked => @updatedonly } |
+      Filter out runs with no resources updated                                                       |
+      %input{:type => "submit", :value => "Go", :class => "btn primary small", :action => "submit"}

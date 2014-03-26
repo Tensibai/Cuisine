@@ -4,21 +4,12 @@
     %title Cuisine !
 
     <!-- Le javascript -->
-    -#
-      %script{:src => "https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"  }
-    -#
-      %script{:src => "/js/jquery.min.js"  }
-    %script{:src => "/js/jquery-1.11.0.js"  }
+
+    %script{:src => "/js/jquery-1.9.1.js"  }
     %script{:src => "/js/jquery-migrate-1.2.1.js"  }
+
     %script{:src => "/js/bootstrap.js"}
-    -#
-      %script{:src => "/js/bootstrap-modal.js"}
-      %script{:src => "/js/bootstrap-alerts.js"}
-      %script{:src => "/js/bootstrap-twipsy.js"  }
-      %script{:src => "/js/bootstrap-popover.js"  }
-      %script{:src => "/js/bootstrap-dropdown.js"}
-      %script{:src => "/js/bootstrap-scrollspy.js"  }
-      %script{:src => "/js/bootstrap-tabs.js"}
+
     %script{:src => "/js/jquery.flot-0.8.2.js"}
 
     <!-- Le styles -->
@@ -51,11 +42,15 @@
               %a{:href => "/about"} About
 
     %div{:class => "container"}
-      %div{:class => "content-main"}
+      %div{:class => "content-main col-md-12"}
         = yield
 
-      %footer
-        %p{:align => "center"}
-          &copy; Nicolas Szalay / 
-          %a{:href => "http://www.rottenbytes.info" }
-            www.rottenbytes.info
+    %footer
+      %p{:align => "center"}
+        &copy; Nicolas Szalay /
+        %a{:href => "http://www.rottenbytes.info" }
+          www.rottenbytes.info
+      %p{:align => "center"}
+        extended by Tensibai /
+        %a{:href => "https://github.com/Tensibai/Cuisine" }
+          Github repository

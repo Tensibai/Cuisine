@@ -95,20 +95,27 @@ cnx.subscribe(config["stomp_queue"], { :ack => :client }) do |data|
 
   # ES ?
   if options.es == true then
+    tostore = {
+        :nodename => infos[:nodename],
+        :elapsed_time => infos[:elapsed_time],
+        :start_time => infos[:start_time].strftime("%Y/%m/%d %H:%M:%S"),
+        :end_time => infos[:end_time].strftime("%Y/%m/%d %H:%M:%S"),
+        :updated_resources => infos[:updated_resources].to_a,
+        :environment => infos[:environment],
+        :diffs => infos[:diffs].to_a
+    }
+    if infos.include?(:resources_total) then
+      tostore.merge!({
+          :resources_total => infos[:resources_total],
+          :updated_resources_total => infos[:updated_resources_total],
+          :updated_resources_count => infos[:updated_resources_count],
+          :cookbook_count => infos[:cookbook_count],
+          :cookbooks => infos[:cookbooks]
+      })
+    end
+    tostore
     Tire.index "#{config["es_index"]}-#{Time.now.strftime("%Y%m%d")}" do
-      store :nodename => infos[:nodename],
-            :elapsed_time => infos[:elapsed_time],
-            :start_time => infos[:start_time].strftime("%Y/%m/%d %H:%M:%S"),
-            :end_time => infos[:end_time].strftime("%Y/%m/%d %H:%M:%S"),
-            :resources_total => infos[:resources_total],
-            :updated_resources_total => infos[:updated_resources_total],
-            :updated_resources_count => infos[:updated_resources_count],
-            :updated_resources => infos[:updated_resources].to_a,
-            :environment => infos[:environment],
-            :diffs => infos[:diffs].to_a,
-            :cookbook_count => infos[:cookbook_count],
-            :cookbooks => infos[:cookbooks]
-
+      store tostore
       refresh
     end
   end
