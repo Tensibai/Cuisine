@@ -121,7 +121,7 @@
     $("#placeholder").bind("plotclick", function (event, pos, item) {
         if (item) {
             var x = item.datapoint[0];
-            window.location="http://"+window.location.host+run_links[x];
+            window.location=run_links[x];
         }
     });
 
