@@ -1,6 +1,6 @@
-require "yaml"
+require 'yaml'
 
 def load_config(filename)
-  return YAML::load_file(filename)
+  YAML::load_file(filename)
 end
 

@@ -1,62 +1,62 @@
 #!/usr/bin/env ruby
 
-require "rubygems"
-require "optparse"
-require "ostruct"
-require "yaml"
-require "stomp"
-require "json"
-require "base64"
-require "time"
+require 'rubygems'
+require 'optparse'
+require 'ostruct'
+require 'yaml'
+require 'stomp'
+require 'json'
+require 'base64'
+require 'time'
 
 options = OpenStruct.new
 # set defaults
 options.debug = false
-options.configfile = "./cuisine.yml"
+options.configfile = './cuisine.yml'
 options.es = true
 options.pg = true
 options.acknowledge = true
 options.foreground = false
-options.pidfile = "/var/run/cuisine_consumer.pid"
+options.pidfile = '/var/run/cuisine_consumer.pid'
 
 opts = OptionParser.new do |opts|
-  opts.banner = "Usage: dataconsumer [options]"
-  opts.on("-d", "--[no-]debug", "Run with debug [default : false]") do |d|
+  opts.banner = 'Usage: dataconsumer [options]'
+  opts.on('-d', '--[no-]debug', 'Run with debug [default : false]') do |d|
     options.debug = d
   end
 
-  opts.on("-c", "--config FILE", "Configuration file path [default : ./cuisine.yml]") do |c|
+  opts.on('-c', '--config FILE', 'Configuration file path [default : ./cuisine.yml]') do |c|
     options.configfile = c
   end
 
-  opts.on("-e", "--[no-]es", "Index data to ElasticSearch [default : true]") do |e|
+  opts.on('-e', '--[no-]es', 'Index data to ElasticSearch [default : true]') do |e|
     options.es = e
   end
 
-  opts.on("-p", "--[no-]pg", "Store data into PostgreSQL [default : true]") do |p|
+  opts.on('-p', '--[no-]pg', 'Store data into PostgreSQL [default : true]') do |p|
     options.pg = p
   end
 
-  opts.on("-a", "--[no-]acknowledge", "Acknowledge data as it comes, removing it from message queue [default : true]") do |a|
+  opts.on('-a', '--[no-]acknowledge', 'Acknowledge data as it comes, removing it from message queue [default : true]') do |a|
     options.acknowledge = a
   end
 
-  opts.on("-f", "--[no-]foreground", "Runs foreground (or goes background) [default : false]") do |f|
+  opts.on('-f', '--[no-]foreground', 'Runs foreground (or goes background) [default : false]') do |f|
     options.foreground = f
   end
 
-  opts.on("-P", "--pidfile FILE", "PID file path [default : /var/run/cuisine_consumer.pid]") do |pid|
+  opts.on('-P', '--pidfile FILE', 'PID file path [default : /var/run/cuisine_consumer.pid]') do |pid|
     options.pidfile = pid
   end
 end
 
 opts.parse!(ARGV)
 
-if options.foreground == false then
-  require "daemons"
+unless options.foreground
+  require 'daemons'
   Daemons.daemonize
-  File.open(options.pidfile,"w") { |f| f.write(Process.pid) }
-  $0="cuisine data consumer"
+  File.open(options.pidfile, 'w') { |f| f.write(Process.pid) }
+  $0='cuisine data consumer'
 end
 
 begin
@@ -67,39 +67,39 @@ rescue Exception => e
 end
 
 # Set up stomp connection
-cnx=Stomp::Client.new(config["stomp_user"], config["stomp_password"], config["stomp_host"], config["stomp_port"], true)
+cnx=Stomp::Client.new(config['stomp_user'], config['stomp_password'], config['stomp_host'], config['stomp_port'], true)
 
 # Set up Tire
-if options.es == true then
-  require "tire"
-  Tire::Configuration.url(config["es_url"])
+if options.es then
+  require 'tire'
+  Tire::Configuration.url(config['es_url'])
 end
 
 # Set up PG
-if options.pg == true then
-  require "pg"
-  conn = PG.connect(:host => config["pg_host"], :dbname => config["pg_db"], :port => config["pg_port"], :user => config["pg_user"], :password => config["pg_password"])
-  conn.prepare("insert_run", "INSERT INTO chefruns (nodename, elapsed_time, start_time, end_time, updated_resources, environment, diffs) VALUES ($1, $2, $3, $4, $5, $6, $7); ")
+if options.pg then
+  require 'pg'
+  conn = PG.connect(:host => config['pg_host'], :dbname => config['pg_db'], :port => config['pg_port'], :user => config['pg_user'], :password => config['pg_password'])
+  conn.prepare('insert_run', 'INSERT INTO chefruns (nodename, elapsed_time, start_time, end_time, updated_resources, environment, diffs) VALUES ($1, $2, $3, $4, $5, $6, $7); ')
 end
 
 # the main stuff
-cnx.subscribe(config["stomp_queue"], { :ack => :client }) do |data|
+cnx.subscribe(config['stomp_queue'], { :ack => :client }) do |data|
   infos = Marshal.load(Base64.decode64(data.body))
 
   puts infos.inspect if options.debug
 
   # PG ?
-  if options.pg == true then
-    conn.exec_prepared("insert_run",[ infos[:nodename], infos[:elapsed_time], infos[:start_time].strftime("%Y/%m/%d %H:%M:%S"), infos[:end_time].strftime("%Y/%m/%d %H:%M:%S"), infos[:updated_resources].to_json, infos[:environment], infos[:diffs].to_json ] )
+  if options.pg then
+    conn.exec_prepared('insert_run',[ infos[:nodename], infos[:elapsed_time], infos[:start_time].strftime('%Y/%m/%d %H:%M:%S'), infos[:end_time].strftime('%Y/%m/%d %H:%M:%S'), infos[:updated_resources].to_json, infos[:environment], infos[:diffs].to_json ] )
   end
 
   # ES ?
-  if options.es == true then
+  if options.es then
     tostore = {
         :nodename => infos[:nodename],
         :elapsed_time => infos[:elapsed_time],
-        :start_time => infos[:start_time].strftime("%Y/%m/%d %H:%M:%S"),
-        :end_time => infos[:end_time].strftime("%Y/%m/%d %H:%M:%S"),
+        :start_time => infos[:start_time].strftime('%Y/%m/%d %H:%M:%S'),
+        :end_time => infos[:end_time].strftime('%Y/%m/%d %H:%M:%S'),
         :updated_resources => infos[:updated_resources].to_a,
         :environment => infos[:environment],
         :diffs => infos[:diffs].to_a
@@ -114,14 +114,14 @@ cnx.subscribe(config["stomp_queue"], { :ack => :client }) do |data|
       })
     end
     tostore
-    Tire.index "#{config["es_index"]}-#{Time.now.strftime("%Y%m%d")}" do
+    Tire.index "#{config['es_index']}-#{Time.now.strftime('%Y%m%d')}" do
       store tostore
       refresh
     end
   end
 
   # Ack ?
-  if options.acknowledge == true then
+  if options.acknowledge then
     cnx.acknowledge data
   end
 

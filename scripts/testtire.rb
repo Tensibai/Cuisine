@@ -1,22 +1,20 @@
-require "rubygems"
-require "tire"
+require 'rubygems'
+require 'tire'
 
 def map2hash(s)
   rslt=s.results.map { |rslt| rslt.to_hash }
 
   # turn the diff into a hash
-  for i in 0..rslt.count-1 do
+  (0..rslt.count-1).each do |i|
     rslt_hash = {}
     rslt[i][:diffs].each { |elt| rslt_hash[elt[0]] = elt[1] }
     rslt[i][:diffs]=rslt_hash
-
 #    rslt[i][:updated_resources] = rslt[i][:updated_resources].to_hash
 
   end
 
 
-
-  return rslt
+  rslt
 end
 
 
@@ -28,19 +26,19 @@ end
 #end
 
 s=Tire.search do
-  facet("environments") { terms :environment  }
+  facet('environments') { terms :environment  }
 end
 
-puts s.results.facets["environments"]["terms"].inspect
-puts ""
-puts ""
+puts s.results.facets['environments']['terms'].inspect
+puts ''
+puts ''
 x = {}
-s.results.facets["environments"]["terms"].each do |key,value|
-  x[key["term"]] = key["count"]
+s.results.facets['environments']['terms'].each do |key, _|
+  x[key['term']] = key['count']
 end
 
 puts x.inspect
-y =x.sort_by{ |k,v| -v  }
+y =x.sort_by{ |_,v| -v  }
 puts y.inspect
 
 exit 0
@@ -58,23 +56,23 @@ exit 0
 
 # --------------------------------------------------
 
-s=Tire.search "chef_reports" do
+s=Tire.search 'chef_reports' do
   criterias = {}
   criterias[:string] = {}
-  criterias[:string][:nodename] = "test1.fotolia.loc"
-  criterias[:string][:updated_resources] ="*nagios*"
-  criterias[:string][:diffs] = "*mem*"
+  criterias[:string][:nodename] = 'test1.fotolia.loc'
+  criterias[:string][:updated_resources] ='*nagios*'
+  criterias[:string][:diffs] = '*mem*'
 
   str_args=[]
   criterias[:string].each_pair { |k,v| str_args.push "#{k}:#{v}" }
 
-  str_query=str_args.join(" AND ")
+  str_query=str_args.join(' AND ')
 
   puts "[+] string query => #{str_query}"
 
 # query { string "nodename:vbo* AND diffs:*foo*" }
   query { string str_query }
-  sort { by :start_time, "desc" }
+  sort { by :start_time, 'desc' }
   size 5
 end
 
@@ -85,7 +83,7 @@ end
 #  x[i][:diffs]=x[i][:diffs].to_hash unless x[i][:diffs].nil?
 #end
 
-puts ""
+puts ''
 #puts s.count
 x=map2hash(s)
 puts x.inspect

@@ -1,6 +1,6 @@
 - if @rinfos then
-  %div{:class => "row" }
-    %div{:class => "col-md-10 col-md-offset-1"}
+  %div{:class => 'row' }
+    %div{:class => 'col-md-10 col-md-offset-1'}
       %h2
         #{@rinfos[:nodename]}
       Date:
@@ -10,7 +10,7 @@
       %h3
         Details
   %div.row
-    %div{:class => "col-md-4 col-md-offset-2" }
+    %div{:class => 'col-md-4 col-md-offset-2' }
       %strong
         Host :
       %ul
@@ -29,25 +29,25 @@
         %li
           %em
             Duration :
-          #{sprintf("%.2f", @rinfos[:elapsed_time])}s
+          #{sprintf('%.2f', @rinfos[:elapsed_time])}s
     - unless @rinfos[:resources_total]  .nil?
-      %div{:class => "col-md-4" }
+      %div{:class => 'col-md-4' }
         %strong Metrics:
         %ul
           %li Total resources: #{@rinfos[:resources_total]}
           %li Updated resources global: #{@rinfos[:updated_resources_total]}
           %li Shown updated resources: #{@rinfos[:updated_resources_count]}
   - unless @rinfos[:cookbooks].nil?
-    %div{:class => "row" }
+    %div{:class => 'row' }
       %div.col-md-10.col-md-offset-1
         %strong  Cookbooks used during this run:
         - if @rinfos[:cookbooks].empty? then
-          %span{:class => "notice label"} No cookbooks in this run.
+          %span{:class => 'notice label'} No cookbooks in this run.
         - else
           %table.table.table-striped.table-condensed.table-bordered
             %thead
               %tr
-                - (1..4).each do |n|
+                - (1..4).each do |_|
                   %th Name
                   %th Version
             %tbody
@@ -58,10 +58,10 @@
                     %td #{version}
 
 
-  %div{:class => "row" }
+  %div{:class => 'row' }
     %div.col-md-10.col-xs-offset-1
       - if @rinfos[:updated_resources].empty? then
-        %span{:class => "notice label"} No resources updated on last run
+        %span{:class => 'notice label'} No resources updated on last run
       - else
 
         %div
@@ -72,7 +72,7 @@
                 #{resource} (#{resource_type})
                 - unless @rinfos[:diffs][resource].nil?
                   %pre.pre-scrollable
-                    #{@rinfos[:diffs][resource].gsub(/[<>]/,{ "<" => "&lt;", ">" => "&gt;"}).gsub(/\n */,"<BR>" )}
+                    #{@rinfos[:diffs][resource].gsub(/[<>]/,{ '<' => '&lt;', '>' => '&gt;'}).gsub(/\n */,'<BR>' )}
 
 - else
   %div.col-md-1
