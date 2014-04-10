@@ -5,17 +5,17 @@
 
     <!-- Le javascript -->
 
-    %script{:src => '/js/jquery-1.9.1.js'  }
-    %script{:src => '/js/jquery-migrate-1.2.1.js'  }
+    %script{:src => url('/js/jquery-1.9.1.js')  }
+    %script{:src => url('/js/jquery-migrate-1.2.1.js')  }
 
-    %script{:src => '/js/bootstrap.js'}
+    %script{:src => url('/js/bootstrap.js')}
 
-    %script{:src => '/js/jquery.flot-0.8.2.js'}
+    %script{:src => url('/js/jquery.flot-0.8.2.js')}
 
     <!-- Le styles -->
 
-    %link{:href => '/css/bootstrap.css', :rel => 'stylesheet'}
-    %link{:href => '/css/bootstrap-theme.css', :rel => 'stylesheet'}
+    %link{:href => url('/css/bootstrap.css'), :rel => 'stylesheet'}
+    %link{:href => url('/css/bootstrap-theme.css'), :rel => 'stylesheet'}
 
   %body
 
@@ -24,22 +24,22 @@
         %div{:class => 'col-md-8 col-md-offset-2'}
           %ul{:class => 'nav navbar-nav'}
             %li
-              %a{:class => 'navbar-brand', :href => '/'} Cuisine
+              %a{:class => 'navbar-brand', :href => url('/')} Cuisine
             %li
-              %a{:href => '/'} Hot stuff
+              %a{:href => url('/')} Hot stuff
             %li
-              %a{:href => '/search'} Search
+              %a{:href => url('/search')} Search
             %li{:class => 'dropdown', :id => 'menu_environment', 'data-dropdown'.to_sym => 'dropdown-toggle'}
               %a{:href => '#1', 'data-toggle'.to_sym => 'dropdown' , :class => 'dropdown-toggle' } Environment
               %ul{:class => 'dropdown-menu'}
                 %li
-                  %a{:href => '/'} All
+                  %a{:href => url('/')} All
                 - @environments.each do |environment, _|
                   %li
-                    %a{:href => "/environment/#{environment}"}
+                    %a{:href => url("/environment/#{environment})"}
                       #{environment}
             %li
-              %a{:href => '/about'} About
+              %a{:href => url('/about')} About
 
     %div{:class => 'container'}
       %div{:class => 'content-main col-md-12'}

@@ -20,9 +20,9 @@
             %div{:class => 'col-md-12'}
               - @rinfos = @infos[i]
               = haml :run
-    %a{:class=>'left carousel-control', :href=>'#run-carousel', 'data-slide'=>'prev'}
+    %a{:class=>'left carousel-control', :href=>url('#run-carousel'), 'data-slide'=>'prev'}
       %span{:class=>'glyphicon glyphicon-chevron-left'}
-    %a{:class=>'right carousel-control', :href=>'#run-carousel', 'data-slide'=>'next'}
+    %a{:class=>'right carousel-control', :href=>url('#run-carousel'), 'data-slide'=>'next'}
       %span{:class=>'glyphicon glyphicon-chevron-right'}
 %div{:class => 'row' }
   -#
@@ -39,7 +39,7 @@
           %li
             #{@infos[i][:start_time]} |
             - |
-            %a{:href => "/run/#{@infos[i][:id]}"}
+            %a{:href => url("/run/#{@infos[i][:id]}")}
               summary
     %div{:class => 'col-md-8' }
       %strong
@@ -49,17 +49,20 @@
       - graph_coords=[]
       - times=[]
       - run_ids=''
+      - run_links=''
       - (0..nb_runs).each do |i|
         - if @infos[i][:elapsed_time] then
           - graph_coords.push "[#{(nb_runs+1)-i}, #{sprintf('%.1f',@infos[i][:elapsed_time].to_f)}]"
           - times.push sprintf('%.1f', @infos[i][:elapsed_time]).to_f
           - run_ids+="'#{(nb_runs+1)-i}': '#{@infos[i][:id]}', "
+          - run_links+="'"+( url("/run/#{@infos[i][:id]}")+"', "
       - graph_points="[#{graph_coords.join(', ')}]"
 
 :javascript
     $(function () {
       var graphdata = #{graph_points};
       var run_ids = { #{run_ids} };
+      var run_links = { #{run_links} };
       $.plot($("#placeholder"), [ graphdata ], {
         series: {
           lines: { show: true },
@@ -118,7 +121,7 @@
     $("#placeholder").bind("plotclick", function (event, pos, item) {
         if (item) {
             var x = item.datapoint[0];
-            window.location="http://"+window.location.host+"/run/"+run_ids[x];
+            window.location="http://"+window.location.host+run_links[x];
         }
     });
 
