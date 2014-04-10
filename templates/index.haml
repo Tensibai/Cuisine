@@ -35,7 +35,7 @@
         %a{:href => url("/host/#{nodename}") }
           #{nodename}
         (#{ago} minutes ago) -
-        %a{'data-target'=>url("##{run_id}"), 'data-toggle'=>'modal', 'data-backdrop' => 'true', 'data-keyboard' => 'true', :href=>'#' }
+        %a{'data-target'=>"##{run_id}", 'data-toggle'=>'modal', 'data-backdrop' => 'true', 'data-keyboard' => 'true', :href=>'#' }
           quick view
         \-
         %a{:href => url("/run/#{run_id}") }

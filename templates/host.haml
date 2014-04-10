@@ -55,7 +55,7 @@
           - graph_coords.push "[#{(nb_runs+1)-i}, #{sprintf('%.1f',@infos[i][:elapsed_time].to_f)}]"
           - times.push sprintf('%.1f', @infos[i][:elapsed_time]).to_f
           - run_ids+="'#{(nb_runs+1)-i}': '#{@infos[i][:id]}', "
-          - run_links+="'"+( url("/run/#{@infos[i][:id]}")+"', "
+          - run_links+="'#{(nb_runs+1)-i}': '"+url("/run/#{@infos[i][:id]}")+"', "
       - graph_points="[#{graph_coords.join(', ')}]"
 
 :javascript
